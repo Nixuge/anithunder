@@ -101,7 +101,7 @@ export default async (req: any, res: any) => {
     const sourcesReq = page.waitForResponse(req => req.url().includes("/mediainfo/"), { timeout: 10000 }).catch(_ => console.warn("Task cancelled."))!;
     // const finalReq = page.waitForRequest(req => req.url().includes('.m3u8'), { timeout: 10000 }).catch(_ => console.warn("Task cancelled."));
 
-    await page.goto(`${url}`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${url}&autostart=true`, { waitUntil: 'domcontentloaded' });
 
     // Check if invalid from html
     if ((await page.content()).includes("We can't find the file you are looking for")) {      
