@@ -84,6 +84,18 @@ setTimeout(() => {
 }, 3000);
 `
 
+const replacementHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <iframe src="https://vid2a41.site/e/8EJW143ZWY04?t=4xjSCPIiBlUIyg%3D%3D&amp;autostart=true" allow="autoplay; fullscreen" allowfullscreen="yes" frameborder="no" scrolling="no" style="width: 100%; height: 100%; overflow: hidden;"></iframe>
+</body>
+</html>`
+
 
 export default async (req: any, res: any) => {
   let {body,method} = req  
@@ -129,12 +141,59 @@ export default async (req: any, res: any) => {
     blocker.enableBlockingInPage(page);
   });
 
+  // function logRequest(interceptedRequest) {
+  // console.log('A request was made:', interceptedRequest.url());}
+  // page.on('request', logRequest);
+
   let keys: string[];
 
   try {
     const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 10000});
 
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    // await page.goto(url, { waitUntil: 'domcontentloaded' });
+    console.log("Page loaded.");
+    const interceptionConf: Interception = {
+      urlPattern: "https://aniwave.to/watch/one-piece.ov8/*",
+      modifyRequest: async ({ event }) => {
+        // Modify request headers
+        console.log(event.headers);
+        
+        return {
+          headers: [{ name: 'X-Custom-Header', value: 'CustomValue' }],
+        }
+      },
+      modifyResponse: async ({ body }) => {
+        return  {
+          body: replacementHtml
+        }
+      },
+    }
+
+    const otherInterceptionConf: Interception = {
+      urlPattern: `*/mcloud/min/embed.js*`,
+      resourceType: 'Script',
+      modifyResponse({ body }) {  
+        console.log("Replacing embed.");
+        return {
+          body: payloadLmao + body
+        }
+      },
+    }
+    console.log("Starting...");
+
+    await interceptManager.intercept(interceptionConf);
+    await interceptManager.intercept(otherInterceptionConf)
+    const a = page.goto(url);
+    // page.setContent(replacementHtml)
+    await delay(3000);
+    console.log("attempting reload");
+
+    await page.reload()
+    console.log("reloaded");
+
+    // await pageGoto;
+    // console.log(await page.content());
+
     console.log("Page loaded.");
 
     // Check if invalid from html
@@ -145,21 +204,10 @@ export default async (req: any, res: any) => {
     }
 
     // Click page until all popups r gone and the video plays
-    await clickPlay(page);
-    console.log("Clicked play !");
+    // await clickPlay(page);
+    // console.log("Clicked play !");
     
-    await interceptManager.intercept(
-      {
-        urlPattern: `*/mcloud/min/embed.js*`,
-        resourceType: 'Script',
-        modifyResponse({ body }) {  
-          console.log("Replacing embed.");
-          return {
-            body: payloadLmao + body
-          }
-        },
-      }
-    )
+    
 
     console.log("Waiting for request with keys...");
     const keysUrlEncoded = await keysReq;
