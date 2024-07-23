@@ -167,6 +167,9 @@ export default async (req: any, res: any) => {
       }
     )
 
+    await delay(40);
+    ezfzefze.a
+
     console.log("Waiting for request with keys...");
     const keysUrlEncoded = await keysReq;
     
