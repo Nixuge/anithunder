@@ -1,12 +1,12 @@
 {
   "name": "rabbitthunder",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A rabbit stream extractor based on puppeteer by cool-dev-guy.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "cool-dev-guy",
+  "author": "Nixuge",
   "license": "GPLv3",
   "dependencies": {
     "@cliqz/adblocker-puppeteer": "^1.30.0",
