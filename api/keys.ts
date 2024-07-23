@@ -30,7 +30,7 @@ require('puppeteer-extra-plugin-stealth/evasions/window.outerdimensions')
 import { PuppeteerBlocker } from '@cliqz/adblocker-puppeteer';
 import fetch from 'cross-fetch'; // required 'fetch'
 
-import { RequestInterceptionManager } from 'puppeteer-intercept-and-modify-requests'
+import { Interception, RequestInterceptionManager } from 'puppeteer-intercept-and-modify-requests'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -118,6 +118,12 @@ export default async (req: any, res: any) => {
   // create browser based on ENV
   let browser: Browser;
 
+  const otherArgs = [
+    '--disable-web-security',
+    '--disable-features=IsolateOrigins',
+    '--disable-site-isolation-trials'
+  ]
+
   if (isProd) {
     browser = await puppeteer.launch({
       args: chrome.args,
@@ -128,7 +134,8 @@ export default async (req: any, res: any) => {
     })
   } else {
     browser = await puppeteer.launch({
-      headless: false,
+      args: otherArgs,
+      headless: true,
       executablePath: '/usr/bin/google-chrome-stable',
     })
   }
@@ -141,59 +148,25 @@ export default async (req: any, res: any) => {
     blocker.enableBlockingInPage(page);
   });
 
-  // function logRequest(interceptedRequest) {
-  // console.log('A request was made:', interceptedRequest.url());}
-  // page.on('request', logRequest);
-
   let keys: string[];
 
   try {
     const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 10000});
 
-    // await page.goto(url, { waitUntil: 'domcontentloaded' });
-    console.log("Page loaded.");
-    const interceptionConf: Interception = {
-      urlPattern: "https://aniwave.to/watch/one-piece.ov8/*",
-      modifyRequest: async ({ event }) => {
-        // Modify request headers
-        console.log(event.headers);
-        
-        return {
-          headers: [{ name: 'X-Custom-Header', value: 'CustomValue' }],
-        }
-      },
-      modifyResponse: async ({ body }) => {
-        return  {
-          body: replacementHtml
-        }
-      },
-    }
-
     const otherInterceptionConf: Interception = {
       urlPattern: `*/mcloud/min/embed.js*`,
       resourceType: 'Script',
       modifyResponse({ body }) {  
-        console.log("Replacing embed.");
+        console.log("Replaced embed.");
         return {
           body: payloadLmao + body
         }
       },
     }
+
     console.log("Starting...");
-
-    await interceptManager.intercept(interceptionConf);
     await interceptManager.intercept(otherInterceptionConf)
-    const a = page.goto(url);
-    // page.setContent(replacementHtml)
-    await delay(3000);
-    console.log("attempting reload");
-
-    await page.reload()
-    console.log("reloaded");
-
-    // await pageGoto;
-    // console.log(await page.content());
-
+    await page.setContent(replacementHtml)
     console.log("Page loaded.");
 
     // Check if invalid from html
@@ -202,12 +175,6 @@ export default async (req: any, res: any) => {
       await browser.close();
       return res.status(400).end("Invalid ID");
     }
-
-    // Click page until all popups r gone and the video plays
-    // await clickPlay(page);
-    // console.log("Clicked play !");
-    
-    
 
     console.log("Waiting for request with keys...");
     const keysUrlEncoded = await keysReq;

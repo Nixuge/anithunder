@@ -84,11 +84,18 @@ export default async (req: any, res: any) => {
   }
   const page = await browser.newPage();
 
-  // DEBUG - VERY USEFUL
-  // function logRequest(interceptedRequest) {
+  // DEBUG - VERY USEFUL 
+  // LOG ON REQUEST
+  // function logRequest(interceptedRequest: HTTPRequest) {
   //   console.log('A request was made:', interceptedRequest.url());
   // }
   // page.on('request', logRequest);
+  //
+  // LOG ON RESPONSE
+  // function logResponse(response: HTTPResponse) {
+  //   console.log("Response: " + response.url());
+  // }
+  // page.on('response', logResponse);
   // END DEBUG
 
   // Set headers,else wont work.
