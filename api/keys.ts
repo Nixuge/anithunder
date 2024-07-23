@@ -34,6 +34,7 @@ import { RequestInterceptionManager } from 'puppeteer-intercept-and-modify-reque
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
+let FUCKWHYISITNOTWORKING: string[] = [];
 
 async function clickPlay(page: Page) {
   let hasDoneInitialClick = false;
@@ -50,10 +51,8 @@ async function clickPlay(page: Page) {
       return;
     } else {
       console.log("Couldn't find play button on page:");
-      console.log(await page.content());
-      
-      await delay(1000)
-      
+      FUCKWHYISITNOTWORKING.push(await page.content());
+      await delay(1000);
     }
   }
 }
@@ -138,7 +137,7 @@ export default async (req: any, res: any) => {
   let keys: string[];
 
   try {
-    const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 30000});
+    const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 30000}).catch(() => {console.log("Timed out...");});
 
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     console.log("Page loaded.");
@@ -177,7 +176,9 @@ export default async (req: any, res: any) => {
   } catch (error) {
     // Just in case
     console.error("Catched error: " + error);
-    return res.status(500).end("Server error.")
+    // res.
+    // return res.status(500).end("Server error.")
+    res.json(FUCKWHYISITNOTWORKING)
   }
 
   await browser.close();
