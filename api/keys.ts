@@ -49,7 +49,9 @@ async function clickPlay(page: Page) {
     } else if (hasDoneInitialClick) {
       return;
     } else {
-      console.log("Couldn't find play button...");
+      console.log("Couldn't find play button on page:");
+      console.log(await page.content());
+      
       await delay(1000)
       
     }
