@@ -32,27 +32,6 @@ import fetch from 'cross-fetch'; // required 'fetch'
 
 import { Interception, RequestInterceptionManager } from 'puppeteer-intercept-and-modify-requests'
 
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
-
-
-async function clickPlay(page: Page) {
-  let hasDoneInitialClick = false;
-  while (true) {
-    page.bringToFront();
-    const elem = await page.$(".play");
-    await delay(200);
-    if (elem) {
-      elem.click();
-      page.bringToFront();
-      await delay(200);
-      hasDoneInitialClick = true;
-    } else if (hasDoneInitialClick) {
-      return;
-    }
-  }
-}
-
-
 const payloadLmao = `
 // alert("hi!!");
 const log = console.log;
