@@ -48,6 +48,10 @@ async function clickPlay(page: Page) {
       hasDoneInitialClick = true;
     } else if (hasDoneInitialClick) {
       return;
+    } else {
+      console.log("Couldn't find play button...");
+      await delay(1000)
+      
     }
   }
 }
@@ -132,7 +136,7 @@ export default async (req: any, res: any) => {
   let keys: string[];
 
   try {
-    const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 10000});
+    const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 30000});
 
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     console.log("Page loaded.");
@@ -145,6 +149,7 @@ export default async (req: any, res: any) => {
     }
 
     // Click page until all popups r gone and the video plays
+    console.log("Waiting to click play...");
     await clickPlay(page);
     console.log("Clicked play !");
     
