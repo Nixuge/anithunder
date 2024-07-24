@@ -1,22 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
-    />
-    <title>Anithunder - v2.0.2 - Nixuge</title>
-    <meta
-      name="A tool to webscrape fast/easily."
-      content="A tool to webscrape fast/easily."
-    />
-  </head>
-  <body>
-    <h1>Anithunder - v2.0.2</h1>
-    <p>
-      Written to watch epic anime 😎
-    </p>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Homepage</title>
+    <style>
+        /* Reset some default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Flexbox container centering the content */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        /* Stylish title */
+        .title {
+            font-size: 2.5rem;
+            color: #343a40;
+            text-shadow: 2px 2px #adb5bd;
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        /* Hover effect for the title */
+        .title:hover {
+            transform: scale(1.1);
+            color: #495057;
+        }
+
+        /* Media query for small screens */
+        @media (max-width: 600px) {
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Ah yes we love keys</h1>
+    </div>
+    <script src="script.js"></script>
+</body>
 </html>

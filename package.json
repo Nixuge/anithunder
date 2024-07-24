@@ -1,31 +1,37 @@
 {
-  "name": "rabbitthunder",
-  "version": "2.0.0",
-  "description": "A rabbit stream extractor based on puppeteer by cool-dev-guy.",
+  "name": "aniwave-keys",
+  "description": "Extracts keys from Aniwave",
+  "module": "index.ts",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "bun run dist/index.js",
+    "dev": "bun src/index.ts",
+    "build": "bun build ./src/index.ts --outdir ./dist --target node",
+    "build:db": "bun run src/scripts/buildDb.ts",
+    "prettier": "bunx prettier --write .",
+    "eslint": "bunx eslint --fix .",
+    "lint": "bun run prettier && bun run eslint"
   },
-  "keywords": [],
-  "author": "Nixuge",
-  "license": "GPLv3",
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@typescript-eslint/eslint-plugin": "^7.17.0",
+    "bun-types": "latest",
+    "eslint": "8.56.0",
+    "prettier": "^3.3.3",
+    "tsc": "^2.0.4"
+  },
+  "peerDependencies": {
+    "typescript": "5.0.0"
+  },
   "dependencies": {
-    "@cliqz/adblocker-puppeteer": "^1.30.0",
-    "@sparticuz/chromium": "^119.0.2",
-    "cross-fetch": "^4.0.0",
-    "express": "^4.19.2",
-    "puppeteer-core": "^21.5.1",
+    "@sparticuz/chromium": "^126.0.0",
+    "colors": "^1.4.0",
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.4.1",
+    "puppeteer": "^22.13.1",
+    "puppeteer-core": "^22.13.1",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "puppeteer-intercept-and-modify-requests": "^1.3.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.10.6",
-    "typescript": "^5.3.3"
-  },
-  "engines": {
-    "node": "18"
-  },
-  "pkg": {
-    "assets": "node_modules/puppeteer-extra-plugin-stealth/**/*.*"
   }
 }
