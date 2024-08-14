@@ -116,7 +116,7 @@ export default async (req: any, res: any) => {
     browser = await puppeteer.launch({
       args: otherArgs,
       headless: true,
-      executablePath: '/usr/bin/google-chrome-stable',
+      executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome', //TODO: auto detect platform
     })
   }
   const client = await browser.target().createCDPSession();
@@ -134,7 +134,7 @@ export default async (req: any, res: any) => {
     const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 10000});
 
     const otherInterceptionConf: Interception = {
-      urlPattern: `*/mcloud/min/embed.js*`,
+      urlPattern: `*/megaf/min/embed.js*`,
       resourceType: 'Script',
       modifyResponse({ body }) {  
         console.log("Replaced embed.");
