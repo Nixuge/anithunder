@@ -72,7 +72,7 @@ const replacementHtml = `<!DOCTYPE html>
     <title>Document</title>
 </head>
 <body>
-    <iframe src="https://vid2a41.site/e/8EJW143ZWY04?t=4xjSCPIiBlUIyg%3D%3D&amp;autostart=true" allow="autoplay; fullscreen" allowfullscreen="yes" frameborder="no" scrolling="no" style="width: 100%; height: 100%; overflow: hidden;"></iframe>
+    <iframe src="https://vid2a41.site/e/QVY9ZG10EY2M?t=4xjSCv0iBV0KyA%3D%3D&autostart=true" allow="autoplay; fullscreen" allowfullscreen="yes" frameborder="no" scrolling="no" style="width: 100%; height: 100%; overflow: hidden;"></iframe>
 </body>
 </html>`
 
@@ -113,10 +113,19 @@ export default async (req: any, res: any) => {
       ignoreHTTPSErrors: true
     })
   } else {
+    const pathes = {
+      "_win32": "...",
+      "linux": "/usr/bin/google-chrome-stable",
+      "darwin": "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+    }
+    const browserPath = pathes[process.platform];
+    if (browserPath == undefined) {
+      throw Error("Unavailable platform.")
+    }
     browser = await puppeteer.launch({
       args: otherArgs,
-      headless: true,
-      executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome', //TODO: auto detect platform
+      headless: false,
+      executablePath: browserPath,
     })
   }
   const client = await browser.target().createCDPSession();
@@ -134,7 +143,7 @@ export default async (req: any, res: any) => {
     const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 10000});
 
     const otherInterceptionConf: Interception = {
-      urlPattern: `*/megaf/min/embed.js*`,
+      urlPattern: `*/megaf/min/all.js*`,
       resourceType: 'Script',
       modifyResponse({ body }) {  
         console.log("Replaced embed.");
