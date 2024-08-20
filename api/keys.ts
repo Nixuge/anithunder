@@ -39,29 +39,30 @@ console.log = () => {};
 console.clear = () => {};
 console.table = () => {};
 
-const originalCharCodeAt = String.prototype.charCodeAt;
+const serialize = [];
+const deserialize = [];
 
-function isASCII(str) {
-  return /^[\x00-\x7F]*$/.test(str);
-}
-const calledOn = [];
+let deserializing = false;
 
-String.prototype.charCodeAt = function(index) {
-  // log("String: " + this + ", Index: " + index);
-  // @ts-ignore
-  if (this.length == 16 && isASCII(this) && !calledOn.includes(this + "")) {
-    // @ts-ignore
-    calledOn.push(this + "");
-    log("Found key " + this + " - num " + calledOn.length);
-
-    if (calledOn.length === 3) {
-      fetch("https://zeiuzeygfzeurf.org/" + encodeURIComponent(JSON.stringify(calledOn)));
-      crash();
-    }
+function add(funcName, args) {
+  if (funcName == "deserialize") {
+    deserializing = true;
   }
+  let obj = {};
+  obj[funcName] = args;
+  if (deserializing) {
+    deserialize.push(obj)
+  } else {
+    serialize.push(obj)
+  }
+}
 
-  return originalCharCodeAt.call(this, index);
-};
+
+setTimeout(() => {
+  // alert(JSON.stringify(all, undefined, 2));
+  fetch("https://zeiuzeygfzeurf.org/" + encodeURIComponent(JSON.stringify({"serialize": serialize, "deserialize": deserialize})));
+}, 5000)
+
 `
 
 const replacementHtml = `<!DOCTYPE html>
@@ -72,10 +73,21 @@ const replacementHtml = `<!DOCTYPE html>
     <title>Document</title>
 </head>
 <body>
-    <iframe src="https://vid2a41.site/e/QVY9ZG10EY2M?t=4xjSCv0iBV0KyA%3D%3D&autostart=true" allow="autoplay; fullscreen" allowfullscreen="yes" frameborder="no" scrolling="no" style="width: 100%; height: 100%; overflow: hidden;"></iframe>
+    <iframe src="https://vid2a41.site/e/QVY9ZG10EY2M?t=4xjSDfQhA1IAxA%3D%3D&autostart=true" allow="autoplay; fullscreen" allowfullscreen="yes" frameborder="no" scrolling="no" style="width: 100%; height: 100%; overflow: hidden;"></iframe>
 </body>
 </html>`
 
+
+const regex = /function [a-zA-Z]\([a-zA-Z],[a-zA-Z]\)\{((?:(?!function).)*)\}function [a-zA-Z]\([a-zA-Z]\)\{((?:(?!function).)*)\}function [a-zA-Z]\([a-zA-Z]\)\{((?:(?!function).)*)\}function [a-zA-Z]\(([a-zA-Z],[a-zA-Z],[a-zA-Z])\)\{((?:(?!function).)*)\}function [a-zA-Z]\([a-zA-Z]\)\{((?:(?!function).)*)\}/gs;
+const funcs = [
+  ["_BASE PLACEHOLDER_", -1, -1],
+  ["rc4", 0, 1],
+  ["serialize", 0, 0],
+  ["deserialize", 0, 0],
+  ["_ARGS PLACEHOLDER", -1, -1],
+  ["substitute", 1, 3],
+  ["reverse", 1, 1]
+]
 
 export default async (req: any, res: any) => {
   let {body,method} = req  
@@ -143,9 +155,40 @@ export default async (req: any, res: any) => {
     const keysReq = page.waitForRequest(req => req.url().includes("zeiuzeygfzeurf"), {timeout: 10000});
 
     const otherInterceptionConf: Interception = {
-      urlPattern: `*/megaf/min/all.js*`,
+      urlPattern: `*/megaf/min/embed.js*`,
       resourceType: 'Script',
-      modifyResponse({ body }) {  
+      modifyResponse({ body }) {
+        // VERY IMPORTANT NOTE:
+        // this works perfectly at one exception: it seems like Puppeteer is kinda flagged but not entirely, 
+        // meaning it cuts out while the deserialize part is taking place, not making it to the end.
+        // Should fix this.
+        const match = body!.matchAll(regex).next().value;
+        const replacements: string[] = match.map((code: string, num: string) => {
+          return code;
+        });
+        if (replacements.length != 7) {
+          throw Error("Wrong size: " + replacements.length);
+        };
+        const argNames = replacements[4].split(",");
+
+        for (let i = 1; i < replacements.length; i++) {
+          if (i == 4) { // arg names match
+            continue;
+          } 
+          const element = replacements[i];
+          // Can't simple unwrap bc ts doesn't realize how its done
+          let out = funcs[i];
+          let funcName = out[0] as string;
+          let firstImportantArg = out[1] as number;
+          let lastImportantArg = out[2] as number;
+
+          console.log(`[${i}] Func: ${funcName}, elem: ${element}`);
+                    
+          const rawArgs = argNames.slice(firstImportantArg, lastImportantArg).join(",");
+          
+          body = body?.replace(element, `add("${funcName}", [${rawArgs}]); ${element}`);
+        }
+        
         console.log("Replaced embed.");
         return {
           body: payloadLmao + body
