@@ -73,7 +73,7 @@ const replacementHtml = `<!DOCTYPE html>
     <title>Document</title>
 </head>
 <body>
-    <iframe src="https://vid2a41.site/e/QVY9ZG10EY2M?t=4xjSDfQhA1IAxA%3D%3D&autostart=true" allow="autoplay; fullscreen" allowfullscreen="yes" frameborder="no" scrolling="no" style="width: 100%; height: 100%; overflow: hidden;"></iframe>
+    <iframe src="https://vid2a41.site/e/QVY9ZG10EY2M?autostart=true" allow="autoplay; fullscreen" allowfullscreen="yes" frameborder="no" scrolling="no" style="width: 100%; height: 100%; overflow: hidden;"></iframe>
 </body>
 </html>`
 
@@ -158,10 +158,6 @@ export default async (req: any, res: any) => {
       urlPattern: `*/megaf/min/embed.js*`,
       resourceType: 'Script',
       modifyResponse({ body }) {
-        // VERY IMPORTANT NOTE:
-        // this works perfectly at one exception: it seems like Puppeteer is kinda flagged but not entirely, 
-        // meaning it cuts out while the deserialize part is taking place, not making it to the end.
-        // Should fix this.
         const match = body!.matchAll(regex).next().value;
         const replacements: string[] = match.map((code: string, num: string) => {
           return code;
@@ -188,6 +184,18 @@ export default async (req: any, res: any) => {
           
           body = body?.replace(element, `add("${funcName}", [${rawArgs}]); ${element}`);
         }
+
+        // What this does?
+        // Basically, by default, if the url is invalid (whether the embed id is invalid OR the t param is too old), 
+        // aniwave will STILL run the method.
+        // 
+        // If it's valid, the method will process as intended.
+        // HOWEVER, if it isn't, it'll fail at the "deserialize" part, and the website will catch that (since if invalid the result 
+        // is set to 403, a number, instead of some text).
+        // That means, if we just fake the result of deserialize so that it doesn't error out, we can extract the instructions & keys
+        // even from INVALID urls. This is what this does.
+        // Can now technically set the url after /e/ to ANYTHING and still have a working extractor.
+        body = body?.replace(replacements[3], `return ${argNames[0]};`)
         
         console.log("Replaced embed.");
         return {
