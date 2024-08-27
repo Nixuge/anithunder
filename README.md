@@ -14,5 +14,7 @@ Was pretty funny to fight against Aniwave, first website I actively scraped. Lea
 
 ### Final script links
 - [Aniwave's scripts.js](https://web.archive.org/web/20240827195359/https://aniwave.to/assets/t/e8c93166fd4dcf9ab41d516d0e/min/scripts.js)
-- [Vidplay/MegaF/...'s latest working embed.js (v=1916e1f89c9)](https://vid2a41.site/assets/megaf/min/embed.js?v=1916e1f89c9) (wasn't captured properly on webarchive, will reupload)
+- Vidplay/MegaF/...'s latest working embed.js (v=1916e1f89c9), use the link below
 - [Vidplay/MegaF/...'s latest default embed.js (when the v parameter is anything other than 1916e1f89c9)](https://web.archive.org/web/20240827195357/https%3A%2F%2Fvid2a41.site%2Fassets%2Fmegaf%2Fmin%2Fembed.js%3Fv%3D1916d886a2c) (pretty sure webarchive strips the ?, so all links are saved as that one)
+
+- [ZIP Containing latest script files](https://paperback13.nixuge.me/cdn/aniwave_tests.zip)
